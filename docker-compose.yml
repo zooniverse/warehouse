@@ -1,0 +1,17 @@
+postgres:
+  image: postgres
+  environment:
+    - "POSTGRES_USER=warehouse"
+    - "POSTGRES_PASSWORD=warehouse"
+  ports:
+    - "5432:5432"
+
+warehouse:
+  dockerfile: Dockerfile
+  build: ./
+  env_file:
+    - .env
+  volumes:
+    - ./:/app
+  links:
+    - postgres

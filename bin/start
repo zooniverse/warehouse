@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+
+require 'warehouse'
+
+Warehouse.logger.info "Starting"
+processor = Warehouse.start(ENV.fetch("RAILS_ENV"))
+Warehouse.logger.info "Started"
+
+loop do
+  processor.run
+  Warehouse.logger.info "microsleep"
+  sleep 0.5
+end

@@ -1,0 +1,15 @@
+development:
+  adapter: jdbc
+  uri: jdbc:postgresql://localhost/warehouse_development?user=marten&password=
+
+test:
+  adapter: jdbc
+  uri: jdbc:postgresql://localhost/warehouse_test?user=marten&password=
+
+staging:
+  adapter: jdbc
+  uri: jdbc:postgresql://postgres/warehouse_staging?user=warehouse&password=warehouse
+
+production:
+  adapter: jdbc
+  uri: jdbc:postgresql://postgres/warehouse_production?user=warehouse&password=warehouse
