@@ -1,4 +1,8 @@
-require 'warehouse/basic_annotation'
+module Warehouse
+  class Annotation
+  end
+end
+
 require 'warehouse/single_annotation'
 require 'warehouse/multiple_annotation'
 require 'warehouse/drawing_annotation'
@@ -8,16 +12,8 @@ require 'warehouse/crop_annotation'
 
 module Warehouse
   class Annotation
-    def self.for(classification, hash)
-      case task_definition["type"]
-      when "single"   then SingleAnnotation
-      when "multiple" then MultipleAnnotation
-      when "drawing"  then DrawingAnnotation
-      when "survey"   then SurveyAnnotation
-      when "text"     then TextAnnotation
-      when "crop"     then CropAnnotation
-      else                 Annotation
-      end
+    def self.from(classification, annotation_hash)
+      [new(classification, annotation_hash)]
     end
 
     attr_reader :classification, :hash
@@ -51,11 +47,11 @@ module Warehouse
     end
 
     def task_label
-      # translate(task_definition["question"] || task_definition["instruction"])
+      translate(task_definition["question"] || task_definition["instruction"])
     end
 
     def task_type
-      # task_definition["type"] || "unknown"
+      task_definition["type"]
     end
 
     def tool
@@ -96,6 +92,16 @@ module Warehouse
 
     def details
       nil
+    end
+
+    private
+
+    def task_definition
+      classification.find_task(task)
+    end
+
+    def translate(key)
+      classification.translate(key)
     end
   end
 end

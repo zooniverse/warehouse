@@ -6,7 +6,6 @@ require 'pry'
 
 require 'warehouse'
 Warehouse.logger = Warehouse::NullLogger.new
-DB.loggers << Logger.new($stdout)
 
 RSpec.configure do |config|
   config.before(:suite) do

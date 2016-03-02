@@ -1,38 +1,38 @@
 module Warehouse
   class SingleAnnotation < Annotation
-    def value(annotation)
-      annotation["value"]
+    def value
+      hash["value"]
     end
 
-    def value_label(annotation)
-      return unless annotation["value"].is_a?(Integer)
-      return unless task_definition["answers"].present?
+    def value_label
+      return unless hash["value"].is_a?(Integer)
+      return unless task_definition["answers"].size > 0
 
-      selected_option = task_definition["answers"][annotation["value"]]
+      selected_option = task_definition["answers"][hash["value"]]
       translate(selected_option["label"])
     end
 
-    def choice(annotation)
+    def choice
       nil
     end
 
-    def answers(annotation)
+    def answers
       nil
     end
 
-    def filters(annotation)
+    def filters
       nil
     end
 
-    def marking(annotation)
+    def marking
       nil
     end
 
-    def frame(annotation)
+    def frame
       nil
     end
 
-    def details(annotation)
+    def details
       nil
     end
   end

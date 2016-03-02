@@ -8,6 +8,7 @@ gem 'panoptes-client'
 gem 'dotenv'
 gem 'telekinesis', '~> 3.1.0'
 gem 'jdbc-postgres'
+gem 'activesupport', '~> 4.2'
 
 group :development do
   gem 'rerun'

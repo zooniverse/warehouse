@@ -1,5 +1,7 @@
-require 'warehouse/annotation'
+require 'warehouse/annotations'
 require 'warehouse/user'
+require 'warehouse/workflow'
+require 'warehouse/workflow_content'
 
 module Warehouse
   class Classification
@@ -33,33 +35,42 @@ module Warehouse
     end
 
     def annotations
-      fetch("annotations").map { |annotation_hash| Annotation.new(self, annotation_hash) }
-    end
-
-    def subjects
-      @subjects ||= subject_ids.map do |subject_id|
-        attributes = linked.fetch("subjects", {}).find do |subject_data|
-          subject_data.fetch("id") == subject_id
-        end
-
-        Subject.new(subject_id, attributes)
+      fetch("annotations").flat_map do |annotation_hash| 
+        Annotations.from(self, annotation_hash)
       end
     end
 
+    def subjects
+      @subjects ||= hash["links"]["subjects"].map do |subject_id|
+        Subject.new(self, find_linked("subjects", subject_id))
+      end
+    end
+
+    def project
+      @project ||= Project.new(self, find_linked("projects", hash["links"]["project"]))
+    end
+
+    def workflow
+      @workflow ||= Workflow.new(self, find_linked("workflows", hash["links"]["workflow"]))
+    end
+
+    def workflow_content
+      @workflow_content ||= WorkflowContent.new(self, find_linked("workflow_contents", hash["links"]["workflow_content"]))
+    end
+
     def user
-      User.new(self, {})
+      @user ||= User.new(self, {})
     end
 
-    def user_id
-      hash.fetch("links").fetch("user")
+    def find_task(task)
+      workflow.find_task(task)
     end
 
-    def workflow_id
-      hash.fetch("links").fetch("workflow")
-    end
-
-    def subject_ids
-      hash.fetch("links").fetch("subjects")
+    def translate(key)
+      return unless key
+      workflow_content.translate(key)
+    rescue
+      binding.pry
     end
 
     private
@@ -74,6 +85,11 @@ module Warehouse
 
     def linked
       event.fetch("linked") { {} }
+    end
+
+    def find_linked(linked_type, linked_id)
+      linked_models = linked.fetch(linked_type, [])
+      linked_models.find { |linked_model| linked_model.fetch("id") == linked_id }
     end
   end
 end
