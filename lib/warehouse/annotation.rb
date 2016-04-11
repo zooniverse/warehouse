@@ -51,7 +51,7 @@ module Warehouse
     end
 
     def task_type
-      task_definition["type"]
+      task_definition["type"] || "unknown"
     end
 
     def tool
@@ -101,7 +101,8 @@ module Warehouse
     end
 
     def translate(key)
-      classification.translate(key)
+      string = classification.translate(key)
+      string && string.gsub("\n", "")
     end
   end
 end

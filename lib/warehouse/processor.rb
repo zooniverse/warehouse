@@ -19,6 +19,9 @@ module Warehouse
           @storage.insert_annotation(annotation.to_row)
         end
       end
+    rescue StandardError => e
+      Warehouse.logger.error "failed", record: record, exception: e
+      raise e
     end
 
     add_transaction_tracer :process, category: :task

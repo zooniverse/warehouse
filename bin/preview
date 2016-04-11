@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+
+require 'warehouse'
+
+jsons          = ARGF.each_line.map { |line| JSON.parse(line) }
+
+require 'csv'
+CSV do |csv|
+  headers_printed = false
+  
+  jsons.each do |hash|
+    classification = Warehouse::Classification.new(hash)
+    common_values  = classification.to_row.merge(event: "...")
+    rows           = classification.annotations.map { |ann| common_values.merge(ann.to_row) }
+
+    csv << rows[0].keys unless headers_printed
+    headers_printed = true
+    rows.each { |row| csv << row.values }
+  end
+end

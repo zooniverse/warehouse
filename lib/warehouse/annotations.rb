@@ -10,6 +10,7 @@ module Warehouse
   class Annotations
     def self.from(classification, annotation_hash)
       task = classification.find_task(annotation_hash["task"])
+      
       klass = case task["type"]
       when "single"   then SingleAnnotation
       when "multiple" then MultipleAnnotation

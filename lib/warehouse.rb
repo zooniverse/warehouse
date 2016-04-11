@@ -64,7 +64,7 @@ end
 Warehouse.logger
 Dotenv.load
 NewRelic::Agent.manual_start
-Honeybadger.start(:'config.path' => Warehouse.config_path("honeybadger.yml"))
+Honeybadger.start(:'config.path' => Warehouse.config_path("honeybadger.yml")) if File.exist?(Warehouse.config_path("honeybadger.yml"))
 
 DB = Sequel.connect(Warehouse.load_config('database.yml', ENV.fetch("RAILS_ENV")))
 DB.extension :pg_json
@@ -86,8 +86,8 @@ module Warehouse
             hash = JSON.parse(json)
 
             if hash.fetch("source") == "panoptes" && hash.fetch("type") == "classification"
-              puts "<<< #{hash.inspect}"
               processor.process(hash)
+
             end
           rescue StandardError => ex
             puts '='*100
